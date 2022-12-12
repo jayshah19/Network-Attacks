@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+    HostA:
+        image: teamrocket:v1
+        container_name: A-10.9.0.5
+        environment:
+                - DISPLAY=${DISPLAY}
+        tty: true
+        cap_add:
+                - ALL
+        volumes:
+                - /tmp/.X11-unix:/tmp/.X11-unix:rw
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.5
+        command: bash -c "
+                      /etc/init.d/openbsd-inetd start &&
+                      tail -f /dev/null
+                 "
+                  
+    HostB:
+        image: teamrocket:v1
+        container_name: B-10.9.0.6
+        environment:
+                - DISPLAY=${DISPLAY}
+        tty: true
+        cap_add:
+                - ALL
+        volumes:
+                - /tmp/.X11-unix:/tmp/.X11-unix:rw
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.6
+
+        command: bash -c "
+                      /etc/init.d/openbsd-inetd start &&
+                      tail -f /dev/null
+                 "
+
+    HostM:
+        image: teamrocket:v1
+        container_name: M-10.9.0.105
+        environment:
+                - DISPLAY=${DISPLAY}
+        tty: true
+        cap_add:
+                - ALL
+        privileged: true
+        volumes:
+                - ./volumes:/volumes
+                - /tmp/.X11-unix:/tmp/.X11-unix:rw
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.105
+
+networks:
+    net-10.9.0.0:
+        name: net-10.9.0.0
+        ipam:
+            config:
+                - subnet: 10.9.0.0/24
+
